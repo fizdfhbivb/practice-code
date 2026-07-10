@@ -1,0 +1,63 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
+
+struct Edge {
+    int u, v;
+    long long w;
+};
+
+int main() {
+    // Ускоряем ввод-вывод
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n, m, s;
+    if (!(cin >> n >> m >> s)) return 0;
+
+    vector<Edge> edges(m);
+    for (int i = 0; i < m; ++i) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+    }
+
+    const long long INF = 1e18;
+    vector<long long> dist(n + 1, INF);
+    dist[s] = 0;
+
+    for (int i = 1; i < n; ++i) {
+        bool updated = false;
+        for (const auto& e : edges) {
+            if (dist[e.u] != INF && dist[e.u] + e.w < dist[e.v]) {
+                dist[e.v] = dist[e.u] + e.w;
+                updated = true;
+            }
+        }
+        if (!updated) break;
+    }
+
+    bool negative_cycle = false;
+    for (const auto& e : edges) {
+        if (dist[e.u] != INF && dist[e.u] + e.w < dist[e.v]) {
+            negative_cycle = true;
+            break;
+        }
+    }
+
+    if (negative_cycle) {
+        cout << "Negative cycle" << endl;
+    } else {
+        for (int i = 1; i <= n; ++i) {
+            if (dist[i] == INF) {
+                cout << "inf ";
+            } else {
+                cout << dist[i] << " ";
+            }
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
