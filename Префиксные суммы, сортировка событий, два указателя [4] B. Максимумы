@@ -1,0 +1,57 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+
+using namespace std;
+
+int main() {
+    int n;
+    if (cin >> n) {
+        vector<int> a(n);
+        for (int i = 0; i < n; ++i) {
+            cin >> a[i];
+        }
+
+        vector<int> left(n);
+        stack<int> st;
+
+        for (int i = 0; i < n; ++i) {
+            while (!st.empty() && a[st.top()] <= a[i]) {
+                st.pop();
+            }
+            
+            if (st.empty()) {
+                left[i] = -1; 
+            } else {
+                left[i] = st.top();
+            }
+            st.push(i);
+        }
+
+        vector<int> right(n);
+        while (!st.empty()) st.pop(); // Очищаем стек
+
+        for (int i = n - 1; i >= 0; --i) {
+            while (!st.empty() && a[st.top()] < a[i]) {
+                st.pop();
+            }
+
+            if (st.empty()) {
+                right[i] = n; 
+            } else {
+                right[i] = st.top();
+            }
+            st.push(i);
+        }
+
+        long long total_sum = 0;
+        for (int i = 0; i < n; ++i) {
+            long long count = (long long)(i - left[i]) * (right[i] - i);
+            total_sum += count * a[i];
+        }
+
+        cout << total_sum << endl;
+    }
+
+    return 0;
+}
